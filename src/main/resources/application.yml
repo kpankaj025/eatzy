@@ -1,0 +1,32 @@
+server:
+  port: 9052
+
+spring:
+  application:
+    name: eatzy
+  security:
+    user:
+      name: user
+      password: user
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/eatzy?useSSL=false&serverTimezone=UTC
+    username: root
+    password: 12345
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+restaurant:
+  file:
+    path: /uploads/restaurantbanner/
+
+
+    

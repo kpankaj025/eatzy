@@ -1,0 +1,17 @@
+package com.foodie.eatzy.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+public class FileData {
+
+    private String fileName;
+    private String path;
+
+}
