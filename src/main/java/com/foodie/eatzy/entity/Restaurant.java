@@ -2,6 +2,7 @@ package com.foodie.eatzy.entity;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -12,9 +13,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,17 +37,22 @@ public class Restaurant {
 
     @Column(unique = true, nullable = false)
     private String name;
-    private String address;
     @Lob
     private String description;
     private LocalTime openTime;
     private LocalTime closeTime;
-    private boolean isOpen = true;
+    private boolean open = true;
 
-    private String banner;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    private Address address;
+    // image
+    private String bannerImageUrl;
 
     @ManyToOne
-    private User user;
+    @JoinColumn(name = "user_id")
+    private User owner;
+
+    private boolean isActive = true;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -53,6 +61,6 @@ public class Restaurant {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<FoodItem> foodItems;
+    private List<FoodItem> foodItems = new ArrayList<>();
 
 }

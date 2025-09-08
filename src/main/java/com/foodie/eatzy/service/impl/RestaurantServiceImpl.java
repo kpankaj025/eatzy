@@ -41,17 +41,18 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public RestaurantDto save(RestaurantDto restaurantDto) {
-        Restaurant restaurant = modelMapper.map(restaurantDto, Restaurant.class);
-        restaurant.setId(Helper.uuid());
-        restaurant.setUser(
-                userRepo.findById(restaurantDto.getUserId())
-                        .orElseThrow(() -> new ResourceNotFoundException("user not found")));
-        Restaurant savedRestaurant = restaurantRepo.save(restaurant);
+        // Restaurant restaurant = modelMapper.map(restaurantDto, Restaurant.class);
+        // restaurant.setId(Helper.uuid());
+        // restaurant.setOwner(
+        // userRepo.findById(restaurantDto.getUserId())
+        // .orElseThrow(() -> new ResourceNotFoundException("user not found")));
+        // Restaurant savedRestaurant = restaurantRepo.save(restaurant);
 
-        RestaurantDto res = modelMapper.map(savedRestaurant, RestaurantDto.class);
-        res.setUserDto(modelMapper.map(savedRestaurant.getUser(), UserDto.class));
+        // RestaurantDto res = modelMapper.map(savedRestaurant, RestaurantDto.class);
+        // res.setUserDto(modelMapper.map(savedRestaurant.getUser(), UserDto.class));
 
-        return res;
+        // return res;
+        return null;
     }
 
     @Override
@@ -65,23 +66,26 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public RestaurantDto getById(String id) {
-        Restaurant restaurant = restaurantRepo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("restaurant not found"));
-        RestaurantDto sR = modelMapper.map(restaurant, RestaurantDto.class);
-        sR.setUserDto(modelMapper.map(restaurant.getUser(), UserDto.class));
-        return sR;
+        // Restaurant restaurant = restaurantRepo.findById(id)
+        // .orElseThrow(() -> new ResourceNotFoundException("restaurant not found"));
+        // RestaurantDto sR = modelMapper.map(restaurant, RestaurantDto.class);
+        // sR.setUserDto(modelMapper.map(restaurant.getUser(), UserDto.class));
+        // return sR;
+        return null;
     }
 
     @Override
     public RestaurantDto update(String id, RestaurantDto restaurantDto) {
-        Restaurant restaurant = restaurantRepo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("restaurant not found"));
-        modelMapper.map(restaurantDto, Restaurant.class);
-        restaurant.setId(id);
-        Restaurant updatedRestaurant = restaurantRepo.save(restaurant);
-        RestaurantDto rD = modelMapper.map(updatedRestaurant, RestaurantDto.class);
-        rD.setUserDto(modelMapper.map(updatedRestaurant.getUser(), UserDto.class));
-        return rD;
+        // Restaurant restaurant = restaurantRepo.findById(id)
+        // .orElseThrow(() -> new ResourceNotFoundException("restaurant not found"));
+        // modelMapper.map(restaurantDto, Restaurant.class);
+        // restaurant.setId(id);
+        // Restaurant updatedRestaurant = restaurantRepo.save(restaurant);
+        // RestaurantDto rD = modelMapper.map(updatedRestaurant, RestaurantDto.class);
+        // rD.setUserDto(modelMapper.map(updatedRestaurant.getUser(), UserDto.class));
+        // return rD;
+
+        return null;
     }
 
     @Override
@@ -104,8 +108,10 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public List<RestaurantDto> findByIsOpen(boolean isOpen) {
-        List<Restaurant> restaurants = restaurantRepo.findByIsOpen(isOpen);
-        return restaurants.stream().map(restaurant -> modelMapper.map(restaurant, RestaurantDto.class)).toList();
+        // List<Restaurant> restaurants = restaurantRepo.findByIsOpen(isOpen);
+        // return restaurants.stream().map(restaurant -> modelMapper.map(restaurant,
+        // RestaurantDto.class)).toList();
+        return null;
     }
 
     // @Value("${restaurant.banner.path}")
@@ -123,7 +129,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
         FileData fileData = fileUploadService.uploadFile(file, pathFile + newFileName);
 
-        restaurant.setBanner(fileData.getFileName());
+        restaurant.setBannerImageUrl(fileData.getFileName());
         Restaurant updatedRestaurant = restaurantRepo.save(restaurant);
 
         return modelMapper.map(updatedRestaurant, RestaurantDto.class);

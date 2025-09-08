@@ -1,6 +1,6 @@
 package com.foodie.eatzy.dto;
 
-import com.foodie.eatzy.entity.Role;
+import com.foodie.eatzy.entity.enums.Role;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

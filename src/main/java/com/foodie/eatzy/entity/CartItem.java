@@ -6,34 +6,35 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
-@Getter
-public class OrderItem {
+public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
-
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "food_id")
     private FoodItem foodItem;
 
     private int quantity;
 
-    public java.math.BigDecimal getActualPriceOfOrderItem() {
-        return java.math.BigDecimal.valueOf(quantity).multiply(foodItem.actualPrice());
+    @ManyToOne
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
+
+    public int getTotalPrice() {
+        return quantity * foodItem.actualPrice().intValue();
     }
 
 }

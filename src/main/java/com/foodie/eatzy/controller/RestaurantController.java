@@ -31,103 +31,110 @@ import org.springframework.core.io.Resource;
 @RequestMapping("/api/v1/restaurants")
 public class RestaurantController {
 
-    private final RestaurantService restaurantService;
+    // private final RestaurantService restaurantService;
 
-    public RestaurantController(RestaurantService restaurantService) {
-        this.restaurantService = restaurantService;
-    }
+    // public RestaurantController(RestaurantService restaurantService) {
+    // this.restaurantService = restaurantService;
+    // }
 
-    // add
+    // // add
 
-    @PostMapping
-    // @PreAuthorize("hasRole('ADMIN')") // method level security
-    public ResponseEntity<RestaurantDto> saveRestaurant(@RequestBody RestaurantDto restaurantDto) {
-        RestaurantDto restaurant = restaurantService.save(restaurantDto);
-        return new ResponseEntity<>(restaurant, HttpStatus.CREATED);
-    }
+    // @PostMapping
+    // // @PreAuthorize("hasRole('ADMIN')") // method level security
+    // public ResponseEntity<RestaurantDto> saveRestaurant(@RequestBody
+    // RestaurantDto restaurantDto) {
+    // RestaurantDto restaurant = restaurantService.save(restaurantDto);
+    // return new ResponseEntity<>(restaurant, HttpStatus.CREATED);
+    // }
 
-    // get all
-    @GetMapping
-    public ResponseEntity<List<RestaurantDto>> getAllRestaurants() {
-        List<RestaurantDto> restaurants = restaurantService.getAll();
-        return new ResponseEntity<>(restaurants, HttpStatus.OK);
-    }
+    // // get all
+    // @GetMapping
+    // public ResponseEntity<List<RestaurantDto>> getAllRestaurants() {
+    // List<RestaurantDto> restaurants = restaurantService.getAll();
+    // return new ResponseEntity<>(restaurants, HttpStatus.OK);
+    // }
 
-    // getById
+    // // getById
 
-    @GetMapping("/{id}")
-    public ResponseEntity<RestaurantDto> getById(@PathVariable("id") String id) {
+    // @GetMapping("/{id}")
+    // public ResponseEntity<RestaurantDto> getById(@PathVariable("id") String id) {
 
-        RestaurantDto restaurant = restaurantService.getById(id);
-        return new ResponseEntity<>(restaurant, HttpStatus.OK);
-    }
+    // RestaurantDto restaurant = restaurantService.getById(id);
+    // return new ResponseEntity<>(restaurant, HttpStatus.OK);
+    // }
 
-    // find by name
-    @GetMapping("/name/{name}")
-    public ResponseEntity<RestaurantDto> findByName(@PathVariable("name") String name) {
-        RestaurantDto restaurant = restaurantService.findByName(name)
-                .orElseThrow(() -> new RuntimeException("restaurant not found"));
-        return new ResponseEntity<>(restaurant, HttpStatus.OK);
-    }
+    // // find by name
+    // @GetMapping("/name/{name}")
+    // public ResponseEntity<RestaurantDto> findByName(@PathVariable("name") String
+    // name) {
+    // RestaurantDto restaurant = restaurantService.findByName(name)
+    // .orElseThrow(() -> new RuntimeException("restaurant not found"));
+    // return new ResponseEntity<>(restaurant, HttpStatus.OK);
+    // }
 
-    // delete by id
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable("id") String id) {
-        restaurantService.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+    // // delete by id
+    // @DeleteMapping("/{id}")
+    // public ResponseEntity<Void> deleteById(@PathVariable("id") String id) {
+    // restaurantService.delete(id);
+    // return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    // }
 
-    // find by is open
+    // // find by is open
 
-    @GetMapping("/isOpen/{isOpen}")
-    public ResponseEntity<List<RestaurantDto>> findByIsOpen(@PathVariable("isOpen") boolean isOpen) {
-        List<RestaurantDto> restaurants = restaurantService.findByIsOpen(isOpen);
-        return new ResponseEntity<>(restaurants, HttpStatus.OK);
-    }
+    // @GetMapping("/isOpen/{isOpen}")
+    // public ResponseEntity<List<RestaurantDto>>
+    // findByIsOpen(@PathVariable("isOpen") boolean isOpen) {
+    // List<RestaurantDto> restaurants = restaurantService.findByIsOpen(isOpen);
+    // return new ResponseEntity<>(restaurants, HttpStatus.OK);
+    // }
 
-    // update
-    @PutMapping("/{id}")
-    public ResponseEntity<RestaurantDto> updateRestaurant(@PathVariable("id") String id,
-            @RequestBody RestaurantDto restaurantDto) {
-        RestaurantDto updatedRestaurant = restaurantService.update(id,
-                restaurantDto);
-        return new ResponseEntity<>(updatedRestaurant, HttpStatus.OK);
-    }
+    // // update
+    // @PutMapping("/{id}")
+    // public ResponseEntity<RestaurantDto> updateRestaurant(@PathVariable("id")
+    // String id,
+    // @RequestBody RestaurantDto restaurantDto) {
+    // RestaurantDto updatedRestaurant = restaurantService.update(id,
+    // restaurantDto);
+    // return new ResponseEntity<>(updatedRestaurant, HttpStatus.OK);
+    // }
 
-    // file upload
+    // // file upload
 
-    @PostMapping("/upload/{restaurantId}")
-    public ResponseEntity<?> uploadFile(@RequestParam("banner") MultipartFile banner, @PathVariable String restaurantId)
-            throws IOException {
+    // @PostMapping("/upload/{restaurantId}")
+    // public ResponseEntity<?> uploadFile(@RequestParam("banner") MultipartFile
+    // banner, @PathVariable String restaurantId)
+    // throws IOException {
 
-        String pathFile = "uploads/restaurantbanner/";
-        RestaurantDto restaurantDto = restaurantService.uploadFile(banner, pathFile, restaurantId);
+    // String pathFile = "uploads/restaurantbanner/";
+    // RestaurantDto restaurantDto = restaurantService.uploadFile(banner, pathFile,
+    // restaurantId);
 
-        return new ResponseEntity<>(restaurantDto, HttpStatus.OK);
+    // return new ResponseEntity<>(restaurantDto, HttpStatus.OK);
 
-    }
+    // }
 
-    // @Value("${restaurant.banner.path}")
-    // private String bannerFolderPath;
+    // // @Value("${restaurant.banner.path}")
+    // // private String bannerFolderPath;
 
-    // file serve
-    @GetMapping("/banner/{restaurantId}")
-    public ResponseEntity<Resource> serveFile(@PathVariable String restaurantId) throws MalformedURLException {
+    // // file serve
+    // @GetMapping("/banner/{restaurantId}")
+    // public ResponseEntity<Resource> serveFile(@PathVariable String restaurantId)
+    // throws MalformedURLException {
 
-        RestaurantDto restaurantDto = restaurantService.getById(restaurantId);
-        String fullPath = "uploads/restaurantbanner/" + restaurantDto.getBanner();
+    // RestaurantDto restaurantDto = restaurantService.getById(restaurantId);
+    // String fullPath = "uploads/restaurantbanner/" + restaurantDto.getBanner();
 
-        Path path = Path.of(fullPath);
-        Resource resource = new UrlResource(path.toUri());
+    // Path path = Path.of(fullPath);
+    // Resource resource = new UrlResource(path.toUri());
 
-        if (!resource.exists()) {
-            return ResponseEntity.notFound().build();
-        }
+    // if (!resource.exists()) {
+    // return ResponseEntity.notFound().build();
+    // }
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_JPEG) // or detect dynamically
-                .body(resource);
+    // return ResponseEntity.ok()
+    // .contentType(MediaType.IMAGE_JPEG) // or detect dynamically
+    // .body(resource);
 
-    }
+    // }
 
 }

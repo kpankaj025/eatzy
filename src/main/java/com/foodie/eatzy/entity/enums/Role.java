@@ -1,4 +1,4 @@
-package com.foodie.eatzy.entity;
+package com.foodie.eatzy.entity.enums;
 
 public enum Role {
     ROLE_ADMIN,
