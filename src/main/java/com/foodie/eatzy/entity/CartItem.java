@@ -8,6 +8,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,24 +18,17 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class CartItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String cartItemId;
 
-    @OneToOne
-    @JoinColumn(name = "food_id")
+    @ManyToOne
+    private Cart cart;
+
+    @ManyToOne
     private FoodItem foodItem;
 
     private int quantity;
-
-    @ManyToOne
-    @JoinColumn(name = "cart_id")
-    private Cart cart;
-
-    public int getTotalPrice() {
-        return quantity * foodItem.actualPrice().intValue();
-    }
-
 }

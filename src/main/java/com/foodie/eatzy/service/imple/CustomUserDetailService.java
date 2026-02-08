@@ -1,4 +1,4 @@
-package com.foodie.eatzy.service.impl;
+package com.foodie.eatzy.service.imple;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -7,15 +7,15 @@ import org.springframework.stereotype.Service;
 
 import com.foodie.eatzy.entity.User;
 import com.foodie.eatzy.exception.ResourceNotFoundException;
-import com.foodie.eatzy.repository.UserRepo;
+import com.foodie.eatzy.repository.UserRepository;
 import com.foodie.eatzy.security.CustomUserDetail;
 
 @Service
 public class CustomUserDetailService implements UserDetailsService {
 
-    private UserRepo userRepo;
+    private UserRepository userRepo;
 
-    public CustomUserDetailService(UserRepo userRepo) {
+    public CustomUserDetailService(UserRepository userRepo) {
         this.userRepo = userRepo;
     }
 
@@ -23,9 +23,10 @@ public class CustomUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         User user = userRepo.findByEmail(username).orElseThrow(() -> new ResourceNotFoundException("user not found"));
-        CustomUserDetail user1 = new CustomUserDetail(user);
 
+        CustomUserDetail user1 = new CustomUserDetail(user);
         return user1;
+
     }
 
 }

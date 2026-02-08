@@ -18,6 +18,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,57 +26,37 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "foodItem")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class FoodItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
     private String description;
-    private BigDecimal basePrice;
-
-    private boolean isAvailable;
-
+    private double price;
+    private boolean available;
     @Enumerated(EnumType.STRING)
-    private FoodType foodType;
-
+    private FoodType foodType = FoodType.VEG;
     private String imageUrl;
-
-    @Enumerated(EnumType.STRING)
-    private UnitType unit;
-
-    private BigDecimal discount;
-
-    private BigDecimal weightKg;
-    private Integer quantity;
-
+    private LocalDateTime createdDate;
+    private int discountAmount;
     @ManyToOne
-    @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-
-    public BigDecimal actualPrice() {
-        return basePrice.subtract(discount);
+    @PrePersist
+    protected void onCreate() {
+        this.createdDate = LocalDateTime.now();
     }
 
-    public BigDecimal getDiscountPercentage() {
-        if (basePrice == null || discount == null || basePrice.compareTo(BigDecimal.ZERO) == 0) {
-            return BigDecimal.ZERO; // avoid division by zero
-        }
-        return discount
-                .divide(basePrice, 2, RoundingMode.HALF_UP) // scale = 2 for %, round properly
-                .multiply(BigDecimal.valueOf(100));
+    public double actualPrice() {
+        return price - discountAmount;
+    }
+
+    public double getDiscountPrecentage() {
+        return (discountAmount / price) * 100;
     }
 
 }

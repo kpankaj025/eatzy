@@ -9,21 +9,26 @@ import com.foodie.eatzy.dto.UserDto;
 
 public interface UserService {
 
-    UserDto saveUser(UserDto userDto);
+    UserDto saveUser(UserDto user);
+
+    UserDto updateUser(UserDto user, String userId);
 
     List<UserDto> getAll();
 
+    List<UserDto> getUserByName(String name);
+
     UserDto getById(String id);
 
-    UserDto updateUser(UserDto userDto, String id);
+    Page<UserDto> getSortedUser(Pageable pageable);
 
-    void deleteUser(String id);
+    void deleteUser(String userId);
 
-    List<UserDto> getUserByName(String name);
+    UserDto getUser(String userId);
 
     UserDto getUserByEmail(String email);
 
-    List<UserDto> searchUserByName(String keyword);
+    List<UserDto> getUsers();
 
-    Page<UserDto> getSortedUser(Pageable pageable);
+    List<UserDto> searchUserName(String keyword);
+
 }

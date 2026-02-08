@@ -9,9 +9,10 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderItemDto {
-    private Long id;
-    private FoodItemDto foodItem;
+public class AddItemToCartRequest {
+
+    private Long productId;
+    private String userId;
     private int quantity;
 
 }

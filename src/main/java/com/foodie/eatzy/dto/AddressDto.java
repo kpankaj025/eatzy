@@ -5,13 +5,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
 @Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderItemDto {
+public class AddressDto {
+
     private Long id;
-    private FoodItemDto foodItem;
-    private int quantity;
+    private String addressLine;
+    private String city;
+    private String state;
+    private String pincode;
+    private String country;
+    private boolean isDefault;
 
 }

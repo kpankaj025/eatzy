@@ -1,40 +1,33 @@
 package com.foodie.eatzy.service;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import com.foodie.eatzy.dto.FileData;
 import com.foodie.eatzy.dto.RestaurantDto;
 
 public interface RestaurantService {
-    // add
+    RestaurantDto addRestaurant(RestaurantDto restaurant);
 
-    RestaurantDto save(RestaurantDto restaurantDto);
+    RestaurantDto updateRestaurant(RestaurantDto restaurant, String restaurantId);
 
-    // get all
-    List<RestaurantDto> getAll();
+    void deleteRestaurant(String restaurantId);
 
-    // get by id
-    RestaurantDto getById(String id);
+    RestaurantDto getRestaurant(String restaurantId);
 
-    // update
-    RestaurantDto update(String id, RestaurantDto restaurantDto);
+    Page<RestaurantDto> getRestaurants(Pageable pageable);
 
-    // delete
-    void delete(String id);
+    List<RestaurantDto> getByOwner(String ownerId);
 
-    // find by name
-    Optional<RestaurantDto> findByName(String name);
+    List<RestaurantDto> searchByName(String nameKeyword);
 
-    // find by is open
+    List<RestaurantDto> searchByAddress(String address);
 
-    List<RestaurantDto> findByIsOpen(boolean isOpen);
+    List<RestaurantDto> getByIsActive(Boolean isActive);
 
-    // upload file
+    List<RestaurantDto> getByOpen(Boolean isOpen);
 
-    public RestaurantDto uploadFile(MultipartFile file, String pathFile, String restaurantId) throws IOException;
+    List<RestaurantDto> getByIsActiveAndOpen(Boolean isActive, Boolean isOpen);
 
 }

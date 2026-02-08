@@ -9,6 +9,11 @@ spring:
       name: user
       password: user
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
   datasource:
     url: jdbc:mysql://localhost:3306/eatzy?useSSL=false&serverTimezone=UTC
     username: root
@@ -26,7 +31,18 @@ spring:
 
 restaurant:
   file:
-    path: /uploads/restaurantbanner/
+    path: uploads/restaurant_banner/
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
+razorpay:
+  key_id: rzp_test_RIW86SSPDVvXjh
+  key_secret: TXbem4JR10l1bhQKFRiz9Ryj
+
 
 
     

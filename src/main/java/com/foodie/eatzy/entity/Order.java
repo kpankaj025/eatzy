@@ -27,51 +27,42 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "orders")
-@AllArgsConstructor
-@NoArgsConstructor
-@Setter
 @Getter
+@Setter
+@NoArgsConstructor
+@Table(name = "food_order")
 public class Order {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    private String id;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
-
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
+
     private Address address;
-
     private int totalAmount;
-
     @Enumerated(EnumType.STRING)
-    private OrderStatus status;
-
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
+    private OrderStatus status = OrderStatus.PLACED;
+    private LocalDateTime orderedAt;
     private LocalDateTime deliveryTime;
-
     @ManyToOne
     @JoinColumn(name = "delivery_boy_id")
-    private User deliveredBy;
+    private User deliveryBoy;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    private PaymentStatus PaymentStatus;
+    private PaymentStatus paymentStatus;
 
     @Enumerated(EnumType.STRING)
-    private PaymentMode PaymentMode;
-
+    private PaymentMode paymentMode;
     private String paymentId;
+    private String razorpayOrderId;
+
 }

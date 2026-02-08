@@ -1,14 +1,12 @@
 package com.foodie.eatzy.controller;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.Path;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,121 +18,113 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.foodie.eatzy.dto.FileData;
 import com.foodie.eatzy.dto.RestaurantDto;
 import com.foodie.eatzy.service.RestaurantService;
-import org.springframework.core.io.Resource;
+import com.foodie.eatzy.service.UserService;
+import com.foodie.eatzy.util.Helper;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/restaurants")
 public class RestaurantController {
 
-    // private final RestaurantService restaurantService;
+    private final UserService userService;
+    private RestaurantService restaurantService;
 
-    // public RestaurantController(RestaurantService restaurantService) {
-    // this.restaurantService = restaurantService;
-    // }
+    public RestaurantController(RestaurantService restaurantService, UserService userService) {
+        this.restaurantService = restaurantService;
+        this.userService = userService;
+    }
 
-    // // add
+    // create restaurant:
 
-    // @PostMapping
-    // // @PreAuthorize("hasRole('ADMIN')") // method level security
-    // public ResponseEntity<RestaurantDto> saveRestaurant(@RequestBody
-    // RestaurantDto restaurantDto) {
-    // RestaurantDto restaurant = restaurantService.save(restaurantDto);
-    // return new ResponseEntity<>(restaurant, HttpStatus.CREATED);
-    // }
+    @Operation(summary = "Get all restaurants", description = "Retrieve a restaurant by its ID. The ID must be a valid UUID.", tags = "Restaurant Get")
+    @GetMapping
+    public ResponseEntity<Page<RestaurantDto>> restaurants(
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+            @RequestParam(value = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(value = "sortDir", required = false, defaultValue = "desc") String sortDir) {
 
-    // // get all
-    // @GetMapping
-    // public ResponseEntity<List<RestaurantDto>> getAllRestaurants() {
-    // List<RestaurantDto> restaurants = restaurantService.getAll();
-    // return new ResponseEntity<>(restaurants, HttpStatus.OK);
-    // }
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<RestaurantDto> restaurants = restaurantService.getRestaurants(pageable);
+        return new ResponseEntity<>(restaurants, HttpStatus.OK);
 
-    // // getById
+    }
 
-    // @GetMapping("/{id}")
-    // public ResponseEntity<RestaurantDto> getById(@PathVariable("id") String id) {
+    @Operation(summary = "Get restaurant by ID", description = "Retrieve a restaurant by its ID. The ID must be a valid UUID.", tags = "Restaurant Get")
+    @ApiResponse(responseCode = "200", description = "Restaurant found")
+    @ApiResponse(responseCode = "404", description = "Restaurant not found")
+    @ApiResponse(responseCode = "400", description = "Invalid ID format")
 
-    // RestaurantDto restaurant = restaurantService.getById(id);
-    // return new ResponseEntity<>(restaurant, HttpStatus.OK);
-    // }
+    @GetMapping("/{id}")
+    public ResponseEntity<RestaurantDto> getRestaurant(@PathVariable String id) {
+        return new ResponseEntity<>(restaurantService.getRestaurant(id), HttpStatus.OK);
+    }
 
-    // // find by name
-    // @GetMapping("/name/{name}")
-    // public ResponseEntity<RestaurantDto> findByName(@PathVariable("name") String
-    // name) {
-    // RestaurantDto restaurant = restaurantService.findByName(name)
-    // .orElseThrow(() -> new RuntimeException("restaurant not found"));
-    // return new ResponseEntity<>(restaurant, HttpStatus.OK);
-    // }
+    // Get restaurants by owner
+    @Operation(summary = "Get restaurants by owner ID", tags = "Restaurant Get")
+    @GetMapping("/owner/{ownerId}")
+    public ResponseEntity<List<RestaurantDto>> getRestaurantsByOwner(@PathVariable String ownerId) {
+        List<RestaurantDto> restaurants = restaurantService.getByOwner(ownerId);
+        return new ResponseEntity<>(restaurants, HttpStatus.OK);
+    }
 
-    // // delete by id
-    // @DeleteMapping("/{id}")
-    // public ResponseEntity<Void> deleteById(@PathVariable("id") String id) {
-    // restaurantService.delete(id);
-    // return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    // }
+    // Get restaurants by active and open status
+    @Operation(summary = "Get restaurants by status", tags = "Restaurant Get")
+    @GetMapping("/status")
+    public ResponseEntity<List<RestaurantDto>> getByIsActiveAndOpen(
+            @RequestParam(value = "isActive") Boolean isActive,
+            @RequestParam(value = "isOpen") Boolean isOpen) {
+        List<RestaurantDto> restaurants = restaurantService.getByIsActiveAndOpen(isActive, isOpen);
+        return new ResponseEntity<>(restaurants, HttpStatus.OK);
+    }
 
-    // // find by is open
+    // Search restaurants by name
+    @Operation(summary = "search restaurants by name", tags = "Restaurant Get")
+    @GetMapping("/search")
+    public ResponseEntity<List<RestaurantDto>> searchByName(@RequestParam("name") String nameKeyword) {
+        List<RestaurantDto> restaurants = restaurantService.searchByName(nameKeyword);
+        return new ResponseEntity<>(restaurants, HttpStatus.OK);
+    }
 
-    // @GetMapping("/isOpen/{isOpen}")
-    // public ResponseEntity<List<RestaurantDto>>
-    // findByIsOpen(@PathVariable("isOpen") boolean isOpen) {
-    // List<RestaurantDto> restaurants = restaurantService.findByIsOpen(isOpen);
-    // return new ResponseEntity<>(restaurants, HttpStatus.OK);
-    // }
+    // Search restaurants by address
+    @Operation(summary = "Search by address", tags = "Restaurant Get")
+    @GetMapping("/search/address")
+    public ResponseEntity<List<RestaurantDto>> searchByAddress(@RequestParam("address") String address) {
+        List<RestaurantDto> restaurants = restaurantService.searchByAddress(address);
+        return new ResponseEntity<>(restaurants, HttpStatus.OK);
+    }
 
-    // // update
-    // @PutMapping("/{id}")
-    // public ResponseEntity<RestaurantDto> updateRestaurant(@PathVariable("id")
-    // String id,
-    // @RequestBody RestaurantDto restaurantDto) {
-    // RestaurantDto updatedRestaurant = restaurantService.update(id,
-    // restaurantDto);
-    // return new ResponseEntity<>(updatedRestaurant, HttpStatus.OK);
-    // }
+    // Create restaurant
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<RestaurantDto> addRestaurant(@Valid @RequestBody RestaurantDto restaurantDto) {
 
-    // // file upload
+        restaurantDto.setId(Helper.uuid());
+        RestaurantDto createdRestaurant = restaurantService.addRestaurant(restaurantDto);
+        return new ResponseEntity<>(createdRestaurant, HttpStatus.CREATED);
+    }
 
-    // @PostMapping("/upload/{restaurantId}")
-    // public ResponseEntity<?> uploadFile(@RequestParam("banner") MultipartFile
-    // banner, @PathVariable String restaurantId)
-    // throws IOException {
+    // Update restaurant
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<RestaurantDto> updateRestaurant(@Valid @RequestBody RestaurantDto restaurantDto,
+            @PathVariable String id) {
+        RestaurantDto updatedRestaurant = restaurantService.updateRestaurant(restaurantDto, id);
+        return new ResponseEntity<>(updatedRestaurant, HttpStatus.OK);
+    }
 
-    // String pathFile = "uploads/restaurantbanner/";
-    // RestaurantDto restaurantDto = restaurantService.uploadFile(banner, pathFile,
-    // restaurantId);
-
-    // return new ResponseEntity<>(restaurantDto, HttpStatus.OK);
-
-    // }
-
-    // // @Value("${restaurant.banner.path}")
-    // // private String bannerFolderPath;
-
-    // // file serve
-    // @GetMapping("/banner/{restaurantId}")
-    // public ResponseEntity<Resource> serveFile(@PathVariable String restaurantId)
-    // throws MalformedURLException {
-
-    // RestaurantDto restaurantDto = restaurantService.getById(restaurantId);
-    // String fullPath = "uploads/restaurantbanner/" + restaurantDto.getBanner();
-
-    // Path path = Path.of(fullPath);
-    // Resource resource = new UrlResource(path.toUri());
-
-    // if (!resource.exists()) {
-    // return ResponseEntity.notFound().build();
-    // }
-
-    // return ResponseEntity.ok()
-    // .contentType(MediaType.IMAGE_JPEG) // or detect dynamically
-    // .body(resource);
-
-    // }
-
+    // Delete restaurant
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteRestaurant(@PathVariable String id) {
+        restaurantService.deleteRestaurant(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

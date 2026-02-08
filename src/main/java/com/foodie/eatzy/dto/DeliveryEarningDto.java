@@ -1,5 +1,6 @@
 package com.foodie.eatzy.dto;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,9 +10,12 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderItemDto {
+public class DeliveryEarningDto {
+
     private Long id;
-    private FoodItemDto foodItem;
-    private int quantity;
+
+    private OrderDto order;
+    private int amount;
+    private LocalDateTime deliveredTime;
 
 }

@@ -9,11 +9,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.foodie.eatzy.entity.User;
 
-public interface UserRepo extends JpaRepository<User, String> {
+public interface UserRepository extends JpaRepository<User, String> {
 
     List<User> findByName(String name);
 
     Optional<User> findByEmail(String email);
+
+    boolean existsByEmail(String email);
 
     List<User> findByNameContaining(String keyword);
 

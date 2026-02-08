@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,8 +16,14 @@ import com.foodie.eatzy.dto.JwtResponse;
 import com.foodie.eatzy.dto.LoginRequest;
 import com.foodie.eatzy.dto.RefreshdToken;
 import com.foodie.eatzy.dto.UserDto;
+import com.foodie.eatzy.entity.enums.Role;
+import com.foodie.eatzy.payload.ApiResponse;
+import com.foodie.eatzy.payload.UserRegisterRequest;
 import com.foodie.eatzy.security.JwtService;
 import com.foodie.eatzy.service.UserService;
+import com.foodie.eatzy.util.Helper;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -26,13 +33,38 @@ public class AuthController {
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
     private UserService userService;
+    private PasswordEncoder passwordEncoder;
 
     public AuthController(AuthenticationManager authenticationManager, UserDetailsService userDetailsService,
-            JwtService jwtService, UserService userService) {
+            JwtService jwtService, UserService userService, PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.jwtService = jwtService;
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody UserRegisterRequest userRegisterRequest) {
+
+        if (!userRegisterRequest.getPassword().equals(userRegisterRequest.getConfirmPassword())) {
+
+            ApiResponse apiResponse = ApiResponse.builder().message("confirm password dosen't match")
+                    .httpStatus(HttpStatus.BAD_REQUEST).success(false).build();
+
+            return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+        }
+
+        UserDto userDto = new UserDto();
+        userDto.setId(Helper.uuid());
+        userDto.setName(userRegisterRequest.getName());
+        userDto.setEmail(userRegisterRequest.getEmail());
+        userDto.setPassword(passwordEncoder.encode(userRegisterRequest.getPassword()));
+        // userDto.setRole(Role.ROLE_ADMIN);
+        userDto.setEnabled(true);
+
+        UserDto userDto2 = userService.saveUser(userDto);
+        return new ResponseEntity<>(userDto2, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")

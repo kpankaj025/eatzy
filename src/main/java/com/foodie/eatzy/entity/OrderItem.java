@@ -12,10 +12,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@Setter
 @Getter
+@Setter
+@NoArgsConstructor
 public class OrderItem {
 
     @Id
@@ -29,11 +28,10 @@ public class OrderItem {
     @ManyToOne
     @JoinColumn(name = "food_id")
     private FoodItem foodItem;
-
     private int quantity;
 
-    public java.math.BigDecimal getActualPriceOfOrderItem() {
-        return java.math.BigDecimal.valueOf(quantity).multiply(foodItem.actualPrice());
+    public double getActualPriceOfOrderItem() {
+        return quantity * foodItem.actualPrice();
     }
 
 }

@@ -15,11 +15,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Setter
 @Getter
-@AllArgsConstructor
+@Setter
 @NoArgsConstructor
 public class DeliveryEarning {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,11 +27,10 @@ public class DeliveryEarning {
     @ManyToOne
     @JoinColumn(name = "delivery_boy_id")
     private User deliveryBoy;
-
     @OneToOne
     @JoinColumn(name = "order_id")
     private Order order;
     private int amount;
-    private LocalDateTime deliveredTime;
+    private LocalDateTime deliveryTime;
 
 }
